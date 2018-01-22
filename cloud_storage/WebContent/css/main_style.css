@@ -1,0 +1,39 @@
+body,div,ul,li,a{margin: 0;padding: 0}
+li{list-style: none}
+a{text-decoration: none;color: #3e4144;}
+.clearFloat{clear: both;}
+.li_color{color: #4e97ff;}
+.li_bgcolor{background-color: #e3e8e8;}
+body{background-color: #EFF4F8;margin-right: 10px;overflow-scrolling:touch;overflow-y: hidden}
+/*缃戦〉椤堕儴*/
+/*缃戦〉logo*/
+#img_header_logo{float: left;margin:10px 32px 0px 12px;}
+/*缃戦〉椤堕儴鑿滃崟宸�*/
+#ul_header_left{float: left;}
+#ul_header_left li{float: left; margin:5px 10px 5px 10px;padding: 14px 20px 14px 14px;}
+#ul_header_left li a:focus{border-bottom: 5px #3b8cff solid;padding-bottom: 12px;}
+/*缃戦〉椤堕儴鑿滃崟鍙�*/
+#ul_header_right{float: right;}
+#ul_header_right li{height:60px;float: left;font-size: 13px;}
+#li_header_username{background:#EFF4F8 url("../img/yonghu.png") no-repeat left center;background-size:36px 40px;}
+#ul_header_right .li_header_text{line-height:60px;margin-right: 10px;margin-left: 6px;}
+#a_username{margin:20px 0px 0px 40px;padding-right: 40px;background:#EFF4F8 url("../img/vip.png") no-repeat right center;background-size:36px 40px;}
+#img_li_1{width: 12px;height: 14px;margin-top: 24px;}
+#img_li_2{width: 21px;height: 20px;margin-top: 18px;}
+#img_li_3{width: 36px;height: 20px;margin-top: 18px;}
+#img_li_4{width: 22px;height: 20px;margin-top: 18px;}
+#li_header_vip a{color: #ff0000;text-decoration: underline;}
+#li_header_vipCenter a{margin-left: 16px;color: white;display: block;line-height:24px;height:24px;width: 70px;padding-left: 16px;margin-top: 20px;background-color:#e35a53;border-radius: 15px;}
+
+#body_left{width: 192px;margin: 14px 0px 0px 0px;float: left;}
+#ul_body_left{text-align:left;}
+#a_body_quanbuwenjian{background: url("../img/quanbuwenjian_checked.png") no-repeat left center;background-size: 24px 24px;padding-left: 30px;}
+#ul_body_left li a{display: block;height: 50px;line-height:24px;font-size: 13px;padding-left: 28px;margin-left: 28px;line-height: 50px;}
+#ul_body_left li:hover{display:block;background-color: #e3e8e8;}
+#body_left .a_body_left{display: block;line-height:24px;font-size:13px;height:24px;background-size: 24px 24px;padding-left: 30px;height: 50px;line-height: 50px;}
+#a_body_fenxiang{background: url("../img/fenxiang.png") no-repeat left center;margin-left: 28px;}
+#a_body_fenxiang:hover{background-color: #e3e8e8;}
+#a_body_huishouzhan{background: url("../img/huishouzhan.png") no-repeat left center;margin-left: 28px;}
+#a_body_huishouzhan:hover{background-color: #e3e8e8;}
+
+#body_right{float: right;width: 1162px;height:602px;border: 1px #8a8a8a solid;border-radius: 5px;background-color: #ffffff;}

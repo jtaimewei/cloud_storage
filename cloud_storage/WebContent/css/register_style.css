@@ -1,0 +1,14 @@
+body,div,form,table,p{margin: 0;padding: 0}
+p{margin:0px 0px 0px 30px;height: 50px;line-height: 50px;padding-left: 100px;font-size: 20px;}
+.clearFloat{clear: both}
+
+#register_header{width: 1000px;padding-top: 10px; height:70px;border-bottom: 1px #9eacca solid;margin: 0 auto;}
+#register_header_left{float: left;width: 500px;}
+#register_header_left img{float: left}
+#register_header_left a{height:30px;font-size: 20px;line-height: 30px;display: block;float: left;margin: 20px 0px 10px 20px;border-left: 1px #8a8a8a solid;padding-left: 20px;color: #8a8a8a;}
+#register_header_right{width: 200px;float: right;padding-right: 50px;line-height: 30px;padding-top: 20px;}
+#register_header_right a{display: block;float: right; width: 50px;height: 30px;border: 1px #a9a9a9 solid;background-color: #EFF4F8;text-align: center}
+form{margin:0 auto;width: 700px;}
+table input{width: 300px;height: 40px;padding-left: 20px;margin: 10px;}
+#checkbox{margin-left: 80px;}
+#btn_register{background-color: #3B8CFF;border: none;color: #ffffff;font-size: 20px; width: 320px;margin-left: 80px;height: 40px;margin-top: 10px;}

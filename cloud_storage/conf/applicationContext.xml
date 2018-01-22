@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:websocket="http://www.springframework.org/schema/websocket" 
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+		
+		<context:component-scan base-package="com.autumn"></context:component-scan>
+		
+		<!-- 1、数据源 -->
+		<!--  <context:property-placeholder location="jdbc_conn.properties"/>
+		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="driverClassName" value="${db.driver}"></property>
+			<property name="url" value="${db.url}"></property>
+			<property name="username" value="${db.name}"></property>
+			<property name="password" value="${db.pwd}"></property>
+		</bean>  -->
+		<!-- 阿里云数据库 -->
+		<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="url" value="jdbc:mysql://rm-uf6y5o7t29a63l8tio.mysql.rds.aliyuncs.com:3306/cloud_storage?allowMultiQueries=true"></property>
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+			<property name="username" value="jtaimewei"></property>
+			<property name="password" value="Wei18874490176"></property>
+		</bean> --> 
+		<!--本地数据库  --> 
+		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="url" value="jdbc:mysql://127.0.0.1:3306/cloud_storage?allowMultiQueries=true"></property>
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+			<property name="username" value="root"></property>
+			<property name="password" value="1234"></property>
+		</bean>  
+		
+		<!-- 2、创建工厂 -->
+			<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+				<property name="dataSource" ref="dataSource"></property>
+				<property name="typeAliasesPackage" value="com.autumn.user.model,com.autumn.file.model"></property>
+			</bean>
+		
+			<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+				<property name="basePackage" value="com.autumn.user.dao,com.autumn.file.dao"></property>
+				<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+			</bean>
+		
+		
+		
+		<!-- 3、配置事物 （采用注解方式：还未配置）-->
+		<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="dataSource"></property>
+		</bean>
+		
+		<tx:annotation-driven transaction-manager="txManager" />
+		
+		
+		
+</beans>

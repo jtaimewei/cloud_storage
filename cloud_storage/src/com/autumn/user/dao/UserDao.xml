@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.autumn.user.dao.UserDao">
+
+	<!--根据用户名 查找用户-验证用户名能不能用 -->
+	<select id="findUserByName" parameterType="String" resultType="User">
+		select * from user where username=#{username} 
+	</select>
+	<!-- 根据邮箱验证码 查询用户 -->
+	<select id="findUserBycode" parameterType="String" resultType="User">
+		select * from user where code=#{code} 
+	</select>
+	
+	<!-- 用户邮箱验证成功后 修改用户的权限为1,将邮箱验证码制空 -->
+	<update id="updateState" parameterType="String">
+		UPDATE user SET state=1,code=null 
+		WHERE username=#{username}   
+	</update>
+	<!--用户注册  -->
+	<insert id="registerUser" parameterType="User">
+		insert into user(username,password,state,code,email) 
+				values(#{username},#{password},#{state},#{code},#{email})	
+	</insert>
+	
+	<select id="findFolderid" parameterType="User" resultType="Integer">
+		select folderid from folder where username=#{username} 
+	</select>
+	
+	<!-- 查询好友列表 -->
+	<select id="findFriendList1" parameterType="String" resultType="String">
+		select username2 from friend where username1=#{username} ;
+	</select>
+	<select id="findFriendList2" parameterType="String" resultType="String">
+		select username1 from friend where username2=#{username} ;
+	</select>
+	<!-- 添加好友 -->
+	<insert id="addFriend" parameterType="Map" >  
+		 insert into friend(username1,username2) 
+	   				values(#{username},#{friendname});  
+	   	delete from message where fromwho=#{friendname} and  towho=#{username};			
+ 	</insert>
+	
+	<!--添加一条聊天信息 -->
+	<insert id="addMessage" parameterType="Message" >  
+		 insert into message(fromwho,towho,messagetext,messagedate,friendMessage) 
+	   				values(#{fromwho},#{towho},#{messagetext},#{messagedate},#{friendMessage});  
+ 	</insert>
+ 	
+ 	<!-- 查找用户对应的消息记录 -->
+ 	<select id="findUserMessages" parameterType="String" resultMap="messagesList">
+		SELECT username,fromwho,messagetext,messagedate,friendMessage
+		FROM user,message
+		WHERE username=fromwho AND towho=#{username}
+	</select>
+	<resultMap type="User" id="messagesList">
+		<id property="username" column="username"/>
+		<collection property="messages" ofType="Message">
+			<result property="fromwho" column="fromwho" />
+			<result property="messagetext" column="messagetext" />
+			<result property="messagedate" column="messagedate" />
+			<result property="friendMessage" column="friendMessage" />
+		</collection>
+
+	</resultMap>
+ 	<!-- 删除聊天记录 -->
+	<delete id="deleteMessages" parameterType="Map">
+		delete from message where fromwho=#{fromwho} and  towho=#{towho};
+	</delete>
+ 	
+ 	
+ 	<!--后台用户管理部分  -->
+ 	<select id="getAllUser" resultType="User">
+		select username,password,state,code,email from user
+	</select>
+	<select id="deleteUser" parameterType="String">
+		update user set state=3  where username=#{username}
+	</select>
+	<select id="updateUser" parameterType="User">
+		update user set password=#{password},email=#{email},state=#{state}  where username=#{username}
+	</select>
+	
+	
+
+
+</mapper>

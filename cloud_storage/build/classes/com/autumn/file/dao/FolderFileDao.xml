@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.autumn.file.dao.FolderFileDao">
+
+	<!-- 用户注册成功后 给用户创建一个文件夹 -->
+	<insert id="addUserFolder" parameterType="String">
+		insert into folder(username,foldername) 
+				values(#{username},#{username})	
+	</insert>
+	
+	<select id="findListFileStructureByUsername" parameterType="FilePackage" resultType="FolderFile">
+		SELECT s.subfolderid, s.subfolderfolder,s.subfolderfile,s.subfoldersize ,s.subfolderdate,s.subfolderfather
+		 
+		<if test="folderfatherid==0">
+		FROM `user` u,`folder` f,`subfolder` s
+		WHERE u.username=f.username AND f.folderid=s.folderid AND s.subfolderflag=1  AND u.username=#{username} AND  `subfolderfather` IS NULL
+		</if>
+		<if test="folderfatherid!=0">
+			FROM `subfolder` s
+			WHERE subfolderfather=#{folderfatherid} AND s.subfolderflag=1
+		</if>
+		order by subfolderfolder
+		LIMIT #{page},#{pagenumber};
+		
+	</select>
+	
+	<!-- 添加文件夹 -->
+	<insert id="addFolder" parameterType="FolderFile" >  
+	    <selectKey keyProperty='subfolderid' resultType='int' order='AFTER'  >  
+	        select LAST_INSERT_ID() AS subfolderid;  
+	    </selectKey>
+	    <if test="subfolderfather==0">
+	    	    insert `subfolder`(`folderid`,`subfolderfolder`,`subfoldersize`,`subfolderdate`,subfolderflag) 
+	    	values(#{folderid},#{subfolderfolder},#{subfoldersize},#{subfolderdate},#{subfolderflag});  
+		</if>
+		<if test="subfolderfather!=0">
+			 insert `subfolder`(`folderid`,`subfolderfolder`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag) 
+	    	values(#{folderid},#{subfolderfolder},#{subfoldersize},#{subfolderdate},#{subfolderfather},#{subfolderflag});  
+		</if>
+ 	</insert>
+ 	
+ 	<!-- 添加文件 -->
+	<insert id="addFile" parameterType="FolderFile" >  
+	    <selectKey keyProperty='subfolderid' resultType='int' order='AFTER'  >  
+	        select LAST_INSERT_ID() AS subfolderid;  
+	    </selectKey>
+	    <if test="subfolderfather==0">
+	    	    insert `subfolder`(`folderid`,`subfolderfile`,`subfoldersize`,`subfolderdate`,subfolderflag) 
+	    	values(#{folderid},#{subfolderfile},#{subfoldersize},#{subfolderdate},#{subfolderflag});  
+		</if>
+		<if test="subfolderfather!=0">
+			 insert `subfolder`(`folderid`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag) 
+	    	values(#{folderid},#{subfolderfile},#{subfoldersize},#{subfolderdate},#{subfolderfather},#{subfolderflag});  
+		</if>
+ 	</insert>
+ 	
+	<!-- 查找文件并返回 -->
+	<select id="backFolder" parameterType="int" resultType="FolderFile">
+		SELECT s.subfolderid,s.folderid,s.subfolderfolder,s.subfolderfile,s.subfoldersize ,s.subfolderdate,s.subfolderfather,s.subfolderflag
+		FROM `subfolder` s
+		WHERE s.subfolderid=#{subfolderid} AND s.subfolderflag=1
+	</select>
+	
+	<!-- 查找 文件夹/文件 名字-解决 文件夹/文件 名字同名问题 -->
+	<select id="findFolderNameList" parameterType="FolderFile" resultType="FolderFile">
+		SELECT s.subfolderfolder,s.subfolderfile
+			FROM subfolder s
+		<if test="subfolderfolder != null and subfolderfolder !=''">	
+			<if test="subfolderfather==0">
+				WHERE  s.subfolderfolder IS NOT NULL  AND  s.subfolderfather IS NULL AND s.folderid=#{folderid} AND s.subfolderfolder=#{subfolderfolder} AND s.subfolderflag=1
+			</if>
+			<if test="subfolderfather!=0">
+				
+				WHERE  s.subfolderfolder IS NOT NULL  AND  s.subfolderfather=#{subfolderfather} AND s.subfolderfolder=#{subfolderfolder} AND s.subfolderflag=1
+			</if>
+		</if>
+		<if test="subfolderfile != null and subfolderfile !=''">	
+			<if test="subfolderfather==0">
+				WHERE  s.subfolderfile IS NOT NULL  AND  s.subfolderfather IS NULL AND s.folderid=#{folderid} AND s.subfolderfile=#{subfolderfile} AND s.subfolderflag=1
+			</if>
+			<if test="subfolderfather!=0">
+				
+				WHERE  s.subfolderfile IS NOT NULL  AND  s.subfolderfather=#{subfolderfather} AND s.subfolderfile=#{subfolderfile} AND s.subfolderflag=1
+			</if>
+		</if>
+		
+		
+	</select>
+	
+	<!-- 查询根目录 -->
+	<select id="selectFolderName" parameterType="int" resultType="String">
+		SELECT f.foldername
+		FROM subfolder s,folder f
+		WHERE s.subfolderid=#{subfolderid} and s.folderid = f.folderid AND s.subfolderflag=1;
+	</select>
+	
+	<select id="selectUser" parameterType="int" resultType="String">
+		SELECT foldername
+		FROM folder 
+		WHERE folderid=#{folderid};
+	</select>
+	<!-- 添加一条分享记录 -->
+	
+	<insert id="addShareInfo" parameterType="Share" >  
+   	    insert into share(username,subfolderid,sharename,sharedate,shareoverdate,sharestate,sharefield,sharepassword) 
+   		values(#{username},#{subfolderid},#{sharename},#{sharedate},#{shareoverdate},#{sharestate},#{sharefield},#{sharepassword});  
+ 	</insert>
+ 	
+ 	<!-- 查找分享的记录 -->
+ 	<select id="findShare" parameterType="Share" resultType="Share">
+		SELECT *
+		FROM share
+		WHERE sharefield=#{sharefield}
+		<!-- <if test="sharepassword==null or sharepassword==''">
+		WHERE sharefield=#{sharefield} AND shareoverdate > NOW();
+		
+		</if>
+		<if test="sharepassword != null and sharepassword != ''">
+		WHERE sharefield=#{sharefield} AND sharepassword=#{sharepassword} ;
+		
+		</if> -->
+	</select>
+ 	
+ 	<!-- 伪删除 -通过修改表中subfloderflag的值实现伪删除操作 -->
+ 	<update id="moveToRecycle" parameterType="int">
+ 		UPDATE `subfolder` SET `subfolderflag` = 0 WHERE `subfolderid` = #{fileid}
+ 	</update>
+ 	
+ 	<!-- 遍历   回收站的内容 -->
+ 	<select id="listRecycle" resultType="FolderFile">
+ 	 	SELECT `subfolderid` ,`folderid`, `subfolderfolder`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag
+ 		FROM `subfolder` 
+ 		<if test="fatherid==0">
+ 			WHERE `subfolderfather` is null and `folderid` = #{userid}
+ 		</if>
+ 		<if test="fatherid!=0">
+ 			WHERE `subfolderfather`= #{fatherid} and `folderid` = #{userid}
+ 		</if>
+ 		order by subfoldersize
+ 	</select>
+ 	
+ 	<!-- 遍历   回收站的内容(撤销删除时，查原来的父文件中是否有重名的) -->
+ 	<select id="recoverFindList" resultType="FolderFile">
+ 	 	SELECT `subfolderid` ,`folderid`, `subfolderfolder`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag
+ 		FROM `subfolder` 
+ 		<if test="fatherid==0">
+ 			WHERE `subfolderfather` is null and `folderid` = #{folderid} and `subfolderflag` = 1
+ 		</if>
+ 		<if test="fatherid!=0">
+ 			WHERE `subfolderid`= #{fatherid} and `folderid` = #{folderid} and `subfolderflag` = 1
+ 		</if>
+ 	</select>
+ 	
+ 	
+ 	<!-- 还原   将文件或文件夹从回收站中还原 -->
+ 	<update id="recover" parameterType="int">
+ 		UPDATE `subfolder`  
+ 		<if test="flag==0">
+ 			SET `subfolderflag` = 1 ,`subfolderfile`= #{filename}
+ 		</if>
+ 		<if test="flag!=0">
+ 			SET `subfolderflag` = 1 , `subfolderfolder`= #{filename}
+ 		</if>
+ 		WHERE `subfolderid` = #{fileid}
+ 	</update>
+	
+	<!--  -->
+	<update id="recoverNoname" parameterType="int">
+		UPDATE `subfolder` SET `subfolderflag` = 1 WHERE `subfolderid` = #{fileid}
+	</update>
+	
+	 <!-- 查询父目录 -->
+	<select id="findfatherid" parameterType="int" resultType="FolderFile">
+		 SELECT `subfolderid`,`subfolderfolder`,`subfolderfile` ,`subfoldersize` ,`subfolderdate` ,`subfolderfather`   FROM `subfolder` WHERE `subfolderid` = #{fileid}
+	</select> 
+	
+	<!-- 查询父目录为指定id的文件和文件夹 -->
+	<select id="findFatherId" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderid`,`folderid`, `subfolderfolder`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag FROM `subfolder` WHERE `subfolderfather` =#{fileid}
+	</select>
+	
+	<!-- 将文件或者文件夹彻底删除 -->
+	<delete id="delfile" parameterType="int">
+		DELETE FROM `subfolder` WHERE `subfolderfather` = #{fileid}
+	</delete>
+	
+	<delete id="delfileid" parameterType="int">
+		DELETE FROM `share` WHERE `subfolderid` = #{fileid};
+		DELETE FROM `subfolder` WHERE `subfolderid` = #{fileid}
+	</delete>
+	
+	<!-- 删除文件时    删除分享记录 -->
+	<delete id="delshare" parameterType="int">
+		DELETE FROM `share` WHERE `subfolderid` = #{fileid}
+	</delete>
+	
+	<!-- 移动文件  获取目录树 -->
+	<select id="gainTree" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderid` , `subfolderfolder` , `subfolderfather` FROM `subfolder`
+		WHERE `subfolderflag` = 1 and `subfolderfile` IS NULL and `folderid` = #{folderid}
+	</select>
+	
+	<!-- 移动文件 将文件移动到根目录下 -->
+	<update id="moveToBoot" parameterType="int">
+		UPDATE `subfolder` SET `subfolderfather` = null WHERE `subfolderid` = #{fileid}
+	</update>
+	
+	<!-- ；移动文件   将文件的文件的父id修改成目标文件的id -->
+	<update id="moveToTarget" parameterType="int">
+		UPDATE `subfolder` SET `subfolderfather` = #{targetid} WHERE `subfolderid` = #{fileid}
+	</update>
+	
+	<!-- 复制文件   将文件复制到目的文件并重命名 -->
+	<insert id="copyToTargetandrename">
+        INSERT INTO `subfolder`(`folderid`, `subfolderfolder`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag) 
+    	<if test="targetid==0">
+    		<if test="flag==0">
+    			<if test="flag2==0">
+		    		values(#{f.folderid},#{f.subfolderfolder},#{filename},#{f.subfoldersize},#{f.subfolderdate},null,#{f.subfolderflag}); 
+    			</if>
+    			<if test="flag2!=0">
+    				values(#{f.folderid},#{f.subfolderfolder},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},null,#{f.subfolderflag});
+    			</if>
+    		</if>
+    		<if test="flag==1">
+    			<if test="flag2==0">
+		    		values(#{f.folderid},#{filename},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},null,#{f.subfolderflag});
+    			</if>
+    			<if test="flag2!=0">
+    				values(#{f.folderid},#{f.subfolderfolder},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},null,#{f.subfolderflag});
+    			</if>
+    		</if>
+    	</if>
+    	<if test="targetid!=0">
+    		<if test="flag==0">
+    			<if test="flag2==0">
+		    		values(#{f.folderid},#{f.subfolderfolder},#{filename},#{f.subfoldersize},#{f.subfolderdate},#{targetid},#{f.subfolderflag});  
+    			</if>
+    			<if test="flag2!=0">
+    				values(#{f.folderid},#{f.subfolderfolder},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},#{targetid},#{f.subfolderflag});
+    			</if>
+    		</if>
+    		<if test="flag==1">
+    			<if test="flag2==0">
+		    		values(#{f.folderid},#{filename},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},#{targetid},#{f.subfolderflag});
+    			</if>
+    			<if test="flag2!=0">
+    				values(#{f.folderid},#{f.subfolderfolder},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},#{targetid},#{f.subfolderflag});
+    			</if>
+    		</if>
+    	</if>
+	</insert>
+
+	<!-- 复制文件   将文件复制到目的文件并重命名 -->
+	<insert id="copyToTarget">
+        INSERT INTO `subfolder`(`folderid`, `subfolderfolder`,`subfolderfile`,`subfoldersize`,`subfolderdate`,`subfolderfather`,subfolderflag) 
+	    values(#{f.folderid},#{f.subfolderfolder},#{f.subfolderfile},#{f.subfoldersize},#{f.subfolderdate},#{targetid},#{f.subfolderflag});  
+	</insert>
+	
+	<!-- 复制文件    据父目录为targetid，name为当前文件的name 获取目标文件id  -->
+	<select id="findfatherandname" resultType="int">
+		SELECT `subfolderid` FROM `subfolder`
+		<if test="targetid==0">
+			WHERE `subfolderflag` = 1 and `subfolderfather` is null and `subfolderfolder` = #{folder}
+		</if>
+		<if test="targetid!=0">
+			WHERE `subfolderflag` = 1 and `subfolderfather` = #{targetid} and `subfolderfolder` = #{folder}
+		</if>
+	</select>
+	
+	<!-- 重名问题    查询该id下面的所有文件 -->
+	<select id="findList" resultType="FolderFile">
+		SELECT `subfolderfolder`,`subfolderfile` FROM `subfolder`
+		<if test="targetid==0">
+			WHERE `subfolderflag` = 1 and `folderid` = #{folderid} and  `subfolderfather`is null
+		</if>
+		<if test="targetid!=0">
+			WHERE `subfolderflag` = 1 and `folderid` = #{folderid} and  `subfolderfather` = #{targetid}
+		</if>
+	</select>
+	
+	<!-- 重命名   给文件重新命名 -->
+	<update id="renameFile">
+		UPDATE `subfolder` 
+		<if test="flag==0">
+			SET `subfolderfile` = #{filename}
+		</if>
+		<if test="flag==1">
+			SET `subfolderfolder` = #{filename}
+		</if>
+		 WHERE `subfolderid` = #{fileid}
+	</update>
+	
+	<!--计算出有当前用户有几条分享  -->
+	<select id="getMyShareCount" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM `share`
+		WHERE username = #{username}
+	</select>
+	<!-- 查找出当前用户的分享记录 -->
+	<select id="getMyShare" parameterType="Map" resultType="Share">
+		SELECT * FROM `share`
+		WHERE username = #{username}
+		LIMIT #{pagingInfo.datanumber},#{pagingInfo.number};
+	</select>
+	<!-- 删除分享记录 -->
+	<delete id="deleteShareByone" parameterType="int">
+		DELETE FROM `share` WHERE `shareid` = #{shareid};
+	</delete>
+	
+	<!-- 查询图片格式的文件 -->
+	<select id="listPicture" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderid`,`subfolderfile` , `subfoldersize` , `subfolderdate` 
+		FROM `subfolder` 
+		WHERE `subfolderflag` = 1 AND `folderid` = #{folderid} AND 
+		(`subfolderfile` LIKE  '%.png' OR  `subfolderfile` LIKE '%.jpg')
+	</select>
+	
+	<!-- 查询文档格式的文件 -->
+	<select id="listDocument" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderfile` , `subfoldersize` , `subfolderdate` 
+		FROM `subfolder` 
+		WHERE `subfolderflag` = 1 AND `folderid` = #{folderid} AND 
+		(`subfolderfile` LIKE  '%.txt' OR  `subfolderfile` LIKE '%.doc')
+	</select>
+	
+	<!-- 查询视频格式的文件 -->
+	<select id="listVideo" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderfile` , `subfoldersize` , `subfolderdate` 
+		FROM `subfolder` 
+		WHERE `subfolderflag` = 1 AND `folderid` = #{folderid} AND 
+		(`subfolderfile` LIKE  '%.mp4')
+	</select>
+	
+	<!-- 查询音乐格式的文件 -->
+	<select id="listMusic" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderfile` , `subfoldersize` , `subfolderdate` 
+		FROM `subfolder` 
+		WHERE `subfolderflag` = 1 AND `folderid` = #{folderid} AND 
+		(`subfolderfile` LIKE  '%.mp3')
+	</select>
+	
+	<!-- 查询其他格式的文件 -->
+	<select id="listOthers" parameterType="int" resultType="FolderFile">
+		SELECT `subfolderfile` , `subfoldersize` , `subfolderdate` 
+		FROM `subfolder` 
+		WHERE `subfolderflag` = 1 AND `folderid` = #{folderid}  
+		AND `subfolderfile` NOT LIKE  '%.png' 
+		AND  `subfolderfile` NOT LIKE '%.jpg'
+		AND `subfolderfile` NOT LIKE  '%.mp3'
+		AND `subfolderfile` NOT LIKE  '%.mp4'
+		AND `subfolderfile` NOT LIKE '%.doc'
+		AND `subfolderfile` NOT LIKE '%.txt'
+	</select>
+</mapper>

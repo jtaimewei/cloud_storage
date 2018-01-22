@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+body,ul,div{margin: 0;padding: 0;}
+.clearFloat{clear: both;}
+li{list-style: none;}
+a{text-decoration: none;}
+#header{height: 70px;width: 100%;background-color: #10a6b4;color: #fff;}
+#header_title{font-size: 25px;display: block;float: left;width: 200px;margin: 20px;}
+#header img{width:200px ;height: 50px;}
+#header div{float: right; width: 200px;line-height: 80px;}
+#body_left{color: #fff;width: 15%;float: left;height: 500px;margin-top: 10px;margin-left: 12px;}
+#body_left li{width: 100%;height: 38px;line-height: 38px;text-align: center;background-color: #10a6b4;border-radius: 5px;margin-bottom: 3px;}
+#body_left a{width: 100%;height: 38px;display: block;color: #fff;}

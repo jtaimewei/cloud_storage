@@ -1,0 +1,41 @@
+body,div,ul,li,a,form,input,table,tr,td,span{margin: 0;padding: 0;}
+li{list-style: none}
+a{text-decoration: none}
+.clearFloat{clear: both}
+.pad_lef{padding-left: 16px;}
+.cont_pad_lef{padding-left: 16px;}
+.append_ul{position: absolute;left: 16px;top: 30px;border: 1px #4E97FF solid;width: 82px;height: 80px;background-color: #ffffff;color: #4E97FF;}
+.li_append_scwj{margin:0;padding: 0; padding:6px;}
+.li_bc_shch{background-color: #f6faff}
+input{border: none;-webkit-appearance: none;}
+body{padding-right: 16px;font-size: 13px;}
+#list_header{margin-top: 16px;position: relative;}
+#list_header_left{width: 474px;float: left;}
+.li_header_left{height:28px;border: 1px #4e97ff solid;border-radius: 5px;font-size: 13px;float: left}
+#header_left_shanchuan{width:48px;background:#4e97ff  url("../img/shangchuan.png") no-repeat;background-position:10% 40%;background-size:18px 20px;color: #fff;padding-left: 36px;line-height: 28px;margin-right: 10px;}
+#list_header_left .header_left_handle{width: 78px;background-position:10% 40%;background-size:18px 20px;padding-left: 36px;line-height: 28px;margin-right: 10px;color:#4e97ff;}
+#header_left_xinjianwenjianjia{background:#fff  url("../img/xinjianwenjianjia.png") no-repeat;}
+#header_left_lixian{background:#fff  url("../img/lixian.png") no-repeat;}
+#header_left_shebei{background:#fff  url("../img/shebei.png") no-repeat;}
+
+#list_header_right{float: right;width: 320px;}
+#list_header_right img{float: left;margin:5px 0px 0px 10px;}
+#list_header_right form{width: 250px;border-radius: 15px;background-color: #EFF4F8;height: 30px;float: left}
+#list_header_right form input{background-color: #EFF4F8;border: none;margin-left: 20px;height: 26px;}
+#btn_header_text{line-height: 10px;}
+#btn_header_search{width:18px;height:28px;background: url("../img/sousuo.png") no-repeat;background-size:18px 20px;padding-top: 6px;background-position:left center;}
+
+#body_header span{width: 560px;height: 40px;line-height: 40px;display: block;float: left;}
+#quanbuwenjian{text-align: left;}
+#yijiazai{text-align: right; }
+#list_content span{width: 60px;height: 40px;display: block;float:left;line-height: 40px;}
+#list_content .chbox{width: 14px;height: 14px;border: 1px #dcdcdc solid;margin: 12px 5px 0px 0px;float: left;}
+#list_content thead{}
+#list_content thead td{height: 40px;}
+#list_content thead td:hover{background-color: #f6faff;}
+#wenjianming{width: 680px;}
+#daxiao{width: 200px;padding-left: 10px;}
+#riqi{width: 250px;padding-left: 10px;}
+
+
+
